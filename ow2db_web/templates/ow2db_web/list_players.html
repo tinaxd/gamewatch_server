@@ -1,0 +1,47 @@
+{% extends 'ow2db_web/base.html' %}
+
+{% load static %}
+
+{% block header %}
+{% include 'ow2db_web/header.html' %}
+<link rel="stylesheet" href="{% static 'ow2db_web/list_players.css' %}">
+<script>
+    const UPDATE_URL = "{% url 'ow2db_web:update-player' %}";
+</script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+<script src="{% static 'ow2db_web/list_players.js' %}"></script>
+{% endblock header %}
+
+{% block body %}
+<table class="player-table">
+    <tr>
+        <th>Player ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Comment</th>
+        <th>Rating</th>
+        <th>Count</th>
+        <th>Last seen</th>
+        <th>Registered at</th>
+        <th>Save</th>
+    </tr>
+    {% for player in players %}
+        <tr>
+            <!-- <form> -->
+            <!-- <input type="hidden" name="player_id" value="{{player.id}}"> -->
+            <td>{{player.id}}</td>
+            <td><img src="{{player.path}}" width="50%"></td>
+            <td><input id="player-{{player.id}}-username-input" type="text" value="{{player.username|default_if_none:''}}"></td>
+            <td><input id="player-{{player.id}}-comment-input" type="text" value="{{player.comment|default_if_none:''}}"></td>
+            <td>{{player.rating}}</td>
+            <td>{{player.count}}</td>
+            <td>{{player.last_seen}}</td>
+            <td>{{player.first_seen}}</td>
+            <!-- <td><input type="submit" value="Save" data-player-id="{{player.id}}"></td> -->
+            <td><button class="save-button" data-player-id="{{player.id}}">Save</button></td>
+            <!-- </form> -->
+        </tr>
+    {% endfor %} 
+</table>
+
+{% endblock body %}

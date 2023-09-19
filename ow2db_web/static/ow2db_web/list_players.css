@@ -1,0 +1,17 @@
+table.player-table>tbody>tr:not(:last-of-type)>td {
+    border-bottom: 3px solid black;
+}
+
+/* Additional styles you might want to use too: */
+table.player-table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #eee;
+}
+
+table.player-table>thead>tr>* {
+    position: sticky;
+    top: 0;
+    background-color: orange;
+    /* `position: sticky;` Needs an opaque background */
+}
