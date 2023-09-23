@@ -15,6 +15,7 @@ celery = {extras = ["redis"], version = "*"}
 scipy = "*"
 django-minio-storage = "*"
 python-dotenv = "*"
+whitenoise = "*"
 
 [dev-packages]
 flake8 = "*"

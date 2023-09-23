@@ -51,6 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -162,3 +163,5 @@ MINIO_STORAGE_USE_HTTPS = bool(os.environ["MINIO_STORAGE_USE_HTTPS"])
 MINIO_STORAGE_ACCESS_KEY = os.environ["MINIO_STORAGE_ACCESS_KEY"]
 MINIO_STORAGE_SECRET_KEY = os.environ["MINIO_STORAGE_SECRET_KEY"]
 MINIO_STORAGE_MEDIA_BUCKET_NAME = os.environ["MINIO_STORAGE_MEDIA_BUCKET_NAME"]
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
