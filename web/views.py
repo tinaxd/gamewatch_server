@@ -1,17 +1,19 @@
+import datetime
+
+import dateutil.parser
+from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db import transaction
 from django.forms import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from . import models
 from django.views.decorators.cache import cache_control
+
+from . import models
 from .forms import CheckForm, LinkForm, LoginForm, RegisterForm
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
-import datetime
-from django.db import transaction
-import dateutil.parser
 
 # Create your views here.
 
@@ -65,7 +67,10 @@ def register_account(request):
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]
-            User.objects.create(username=username, password=password)
+            u = User()
+            u.username = username
+            u.set_password(password)
+            u.save()
             return redirect(reverse("web:account"))
     else:
         form = RegisterForm()
