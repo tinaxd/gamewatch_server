@@ -77,7 +77,7 @@ def view_players(request):
 @cache_control(public=True, max_age=24 * 60 * 60)
 def single_screenshot(request, screenshot_id):
     sc = Screenshot.objects.get(id=screenshot_id)
-    return HttpResponse(sc.image, content_type="image/png")
+    return HttpResponse(sc.image.read(), content_type="image/png")
 
 
 @login_required
@@ -88,7 +88,7 @@ def single_player(request, player_id):
         .order_by("-original_sc__created_at")
         .first()
     )
-    return HttpResponse(img.image, content_type="image/png")
+    return HttpResponse(img.image.read(), content_type="image/png")
 
 
 @login_required

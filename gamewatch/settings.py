@@ -10,7 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -31,6 +36,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "minio_storage",
     "rest_framework",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -80,11 +86,11 @@ WSGI_APPLICATION = "gamewatch.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "ow2db",
-        "USER": "ow2db",
-        "PASSWORD": "ow2db",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": os.environ["DB_NAME"],
+        "USER": os.environ["DB_USER"],
+        "PASSWORD": os.environ["DB_PASSWORD"],
+        "HOST": os.environ["DB_HOST"],
+        "PORT": os.environ["DB_PORT"],
     }
 }
 
@@ -149,3 +155,10 @@ LOGIN_URL = "/nextpex/account/login"
 #         },
 #     },
 # }
+
+DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
+MINIO_STORAGE_ENDPOINT = os.environ["MINIO_STORAGE_ENDPOINT"]
+MINIO_STORAGE_USE_HTTPS = bool(os.environ["MINIO_STORAGE_USE_HTTPS"])
+MINIO_STORAGE_ACCESS_KEY = os.environ["MINIO_STORAGE_ACCESS_KEY"]
+MINIO_STORAGE_SECRET_KEY = os.environ["MINIO_STORAGE_SECRET_KEY"]
+MINIO_STORAGE_MEDIA_BUCKET_NAME = os.environ["MINIO_STORAGE_MEDIA_BUCKET_NAME"]

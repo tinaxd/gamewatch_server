@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Screenshot(models.Model):
     id = models.AutoField(primary_key=True)
-    image = models.BinaryField()
+    image = models.FileField(upload_to="screenshots/")
     sent_by = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -20,8 +20,8 @@ class OW2UserImage(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-    image = models.BinaryField()
-    histogram = models.BinaryField(blank=True, null=True)
+    image = models.FileField(upload_to="ow2userimages/")
+    histogram = models.FileField(upload_to="ow2userhisto/", blank=True, null=True)
     ow2_user = models.ForeignKey(
         "OW2UniqueUser",
         blank=True,

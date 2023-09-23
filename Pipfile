@@ -13,6 +13,8 @@ pillow = "*"
 opencv-python = "*"
 celery = {extras = ["redis"], version = "*"}
 scipy = "*"
+django-minio-storage = "*"
+python-dotenv = "*"
 
 [dev-packages]
 flake8 = "*"

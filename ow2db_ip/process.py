@@ -98,12 +98,14 @@ def find_same_user(user_img_id) -> int | None:
         .only("id", "ow2_user_id")
         .all()
     )
-    my_hist = np.load(io.BytesIO(OW2UserImage.objects.get(id=user_img_id).histogram))
+    my_hist = np.load(
+        io.BytesIO(OW2UserImage.objects.get(id=user_img_id).histogram.read())
+    )
 
     corrs = []
     for assigned_user_img_id in assigned_user_img_ids:
         user_img = OW2UserImage.objects.get(id=assigned_user_img_id.id)
-        user_img_hist = np.load(io.BytesIO(user_img.histogram))
+        user_img_hist = np.load(io.BytesIO(user_img.histogram.read()))
         r_xy = scipy.signal.correlate(my_hist, user_img_hist, mode="same")
         r_xx = np.sum(np.power(my_hist, 2))
         r_yy = np.sum(np.power(user_img_hist, 2))

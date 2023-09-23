@@ -202,7 +202,7 @@ class OW2DBUploadSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         upload = Screenshot(
-            image=validated_data["image"].read(), sent_by=validated_data["sent_by"]
+            image=validated_data["image"], sent_by=validated_data["sent_by"]
         )
         upload.save()
 
