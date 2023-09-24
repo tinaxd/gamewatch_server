@@ -108,3 +108,44 @@ class OW2DBImageUpload(mixins.CreateModelMixin, generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
+
+
+@api_view(["GET"])
+def is_tracked_game(request):
+    game_name = request.GET.get("game_name", None)
+    if game_name is None:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    game = wm.Game.objects.filter(name=game_name).first()
+    if game is None:
+        return JsonResponse({"is_tracked": False})
+    else:
+        return JsonResponse({"is_tracked": True})
+
+
+@api_view(["GET"])
+def get_game_emoji_name(request, game_name):
+    game = wm.Game.objects.filter(name=game_name).first()
+    if game is None or game.emoji_name is None:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    else:
+        return JsonResponse({"emoji_name": game.emoji_name})
+
+
+@api_view(["GET"])
+def reverse_game_from_emoji(request):
+    emoji_name = request.GET.get("emoji_name", None)
+    if emoji_name is None:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    game = wm.Game.objects.filter(emoji_name=emoji_name).first()
+    if game is None:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    else:
+        return JsonResponse({"game_name": game.name})
+
+
+@api_view(["GET"])
+def get_game_emoji_list(request):
+    games = wm.Game.objects.filter(emoji_name__isnull=False).all()
+    return JsonResponse({"emoji_names": [game.emoji_name for game in games]})
