@@ -33,7 +33,7 @@
             <td><img src="{% url 'ow2db_web:single-player' player.id %}" width="50%"></td>
             <td><input id="player-{{player.id}}-username-input" type="text" value="{{player.username|default_if_none:''}}"></td>
             <td><input id="player-{{player.id}}-comment-input" type="text" value="{{player.comment|default_if_none:''}}"></td>
-            <td>{{player.rating}}</td>
+            <td><input id="player-{{player.id}}-rating-input" type="number" min="1" max="5" value="{{player.rating}}"></td>
             <td>{{player.count}}</td>
             <td>{{player.last_seen}}</td>
             <td>{{player.first_seen}}</td>

@@ -35,6 +35,6 @@ class OW2UniqueUser(models.Model):
     id = models.AutoField(primary_key=True)
     first_seen = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(auto_now_add=True)
-    username = models.CharField(max_length=100, blank=True, null=True, unique=True)
+    username = models.CharField(max_length=100, blank=True, null=True)
     comment = models.TextField(blank=True, null=True)
     rating = models.IntegerField(blank=True, null=True)

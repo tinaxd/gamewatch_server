@@ -15,6 +15,9 @@ class PlayerUpdateSerializer(serializers.Serializer):
     player_id = serializers.IntegerField()
     username = serializers.CharField(max_length=100, allow_blank=True)
     comment = serializers.CharField(max_length=1000, allow_blank=True)
+    rating = serializers.IntegerField(
+        min_value=1, max_value=5, required=False, allow_null=True
+    )
 
     def validate_player_id(self, value):
         if not models.OW2UniqueUser.objects.filter(id=value).exists():
@@ -32,6 +35,11 @@ class PlayerUpdateSerializer(serializers.Serializer):
             validated_data["comment"]
             if "comment" in validated_data
             else unique_user.comment
+        )
+        unique_user.rating = (
+            validated_data["rating"]
+            if "rating" in validated_data
+            else unique_user.rating
         )
         unique_user.save()
         return validated_data
