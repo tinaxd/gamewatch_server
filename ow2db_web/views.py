@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Count, OuterRef, Subquery
 from django.http import HttpResponse
 from django.http.response import HttpResponseBadRequest
@@ -54,23 +55,12 @@ def view_players(request):
         .order_by("-last_seen")
     )
 
-    players = queryset.all()
+    players_p = Paginator(queryset, 25)
 
-    entries = [
-        {
-            "id": player["id"],
-            "path": reverse("ow2db_web:single-player", args=[player["id"]]),
-            "first_seen": player["first_seen"],
-            "last_seen": player["last_seen"],
-            "username": player["username"],
-            "comment": player["comment"],
-            "rating": player["rating"],
-            "count": player["count"],
-        }
-        for player in players
-    ]
+    page_number = request.GET.get("page", 1)
+    players = players_p.get_page(page_number)
 
-    return render(request, "ow2db_web/list_players.html", {"players": entries})
+    return render(request, "ow2db_web/list_players.html", {"players": players})
 
 
 @login_required

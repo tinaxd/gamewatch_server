@@ -30,7 +30,7 @@
             <!-- <form> -->
             <!-- <input type="hidden" name="player_id" value="{{player.id}}"> -->
             <td>{{player.id}}</td>
-            <td><img src="{{player.path}}" width="50%"></td>
+            <td><img src="{% url 'ow2db_web:single-player' player.id %}" width="50%"></td>
             <td><input id="player-{{player.id}}-username-input" type="text" value="{{player.username|default_if_none:''}}"></td>
             <td><input id="player-{{player.id}}-comment-input" type="text" value="{{player.comment|default_if_none:''}}"></td>
             <td>{{player.rating}}</td>
@@ -43,5 +43,17 @@
         </tr>
     {% endfor %} 
 </table>
+
+{% if players.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ players.previous_page_number }}">previous</a>
+{% endif %}
+<span class="current">
+    Page {{ players.number }} of {{ players.paginator.num_pages }}.
+</span>
+{% if players.has_next %}
+    <a href="?page={{ players.next_page_number }}">next</a>
+    <a href="?page={{ players.paginator.num_pages }}">last &raquo;</a>
+{% endif %}
 
 {% endblock body %}
