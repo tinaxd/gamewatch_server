@@ -15,11 +15,23 @@
     {% for image in images %}
         <tr>
             <td>{{image.id}}</td>
-            <td><img src="{{image.path}}" width="20%"></td>
+            <td><img src="{% url 'ow2db_web:single-screenshot' image.id %}" width="20%"></td>
             <td>{{image.sent_by}}</td>
             <td>{{image.created_at}}</td>
         </tr>
     {% endfor %} 
 </table>
+
+{% if images.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ images.previous_page_number }}">previous</a>
+{% endif %}
+<span class="current">
+    Page {{ images.number }} of {{ images.paginator.num_pages }}.
+</span>
+{% if images.has_next %}
+    <a href="?page={{ images.next_page_number }}">next</a>
+    <a href="?page={{ images.paginator.num_pages }}">last &raquo;</a>
+{% endif %}
 
 {% endblock body %}

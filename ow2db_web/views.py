@@ -2,9 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count, OuterRef, Subquery
 from django.http import HttpResponse
-from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render
-from django.urls import reverse
 from django.views.decorators.cache import cache_control
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import APIException
@@ -17,19 +15,13 @@ from .serializers import PlayerUpdateSerializer
 # Create your views here.
 @login_required
 def view_screenshots(request):
-    scs = Screenshot.objects.only("id").order_by("-created_at").all()[:5]
+    scs = Screenshot.objects.only("id").order_by("-created_at").all()
 
-    images = [
-        {
-            "path": reverse("ow2db_web:single-screenshot", args=[sc.id]),
-            "id": sc.id,
-            "sent_by": sc.sent_by,
-            "created_at": sc.created_at,
-        }
-        for sc in scs
-    ]
+    scs_p = Paginator(scs, 5)
+    page_num = request.GET.get("page", 1)
+    scs = scs_p.get_page(page_num)
 
-    return render(request, "ow2db_web/list_screenshot.html", {"images": images})
+    return render(request, "ow2db_web/list_screenshot.html", {"images": scs})
 
 
 @login_required
