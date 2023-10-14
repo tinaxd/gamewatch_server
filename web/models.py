@@ -116,11 +116,8 @@ class ApexabilityCheckOld(models.Model):
     def __str__(self):
         return f"{self.player} {self.played_game} {self.entry_type}s at {self.time}"
 
-    class Meta:
-        indexes = [models.Index(fields=["-time"], name="check_time_old_desc")]
 
-
-class ApexabilityCheck(models.Model):
+class PlayHistory(models.Model):
     player = models.ForeignKey(
         Player, blank=False, null=False, on_delete=models.CASCADE
     )
@@ -130,17 +127,10 @@ class ApexabilityCheck(models.Model):
         Game, blank=True, null=True, on_delete=models.SET_NULL
     )
 
-    def as_dict(self):
-        return {
-            "player": self.player.display_name,
-            "start_time": self.start_time,
-            "stop_time": self.stop_time,
-        }
-
     def __str__(self):
         return (
-            f"{self.player} {self.played_game} from "
-            f"{self.start_time} to {self.stop_time}"
+            f"{self.player} from "
+            f"{self.start_time} to {self.stop_time} playing {self.played_game}"
         )
 
     class Meta:

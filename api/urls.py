@@ -22,7 +22,7 @@ urlpatterns = [
     ),
     path("view/level", views.level, name="view-level"),
     path("view/rank", views.rank, name="view-rank"),
-    path("view/check", views.check, name="view-check"),
+    # path("view/check", views.check, name="view-check"),
     path("ow2db/upload", views.OW2DBImageUpload.as_view(), name="ow2db-upload"),
     path("game/is_tracked", views.is_tracked_game, name="game-is-tracked"),
     path(
