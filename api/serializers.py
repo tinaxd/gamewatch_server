@@ -16,7 +16,7 @@ class ObjectNotFoundError(APIException):
         self.detail = f"Specified {object_name} not found"
 
 
-class LevelUpdateSerializer(serializers.Serializer):
+class LevelUpdateCreateSerializer(serializers.Serializer):
     in_game_name = serializers.CharField()
     old_level = serializers.IntegerField(required=False)
     new_level = serializers.IntegerField()
@@ -42,7 +42,7 @@ class LevelUpdateSerializer(serializers.Serializer):
         return validated_data
 
 
-class RankUpdateSerializer(serializers.Serializer):
+class RankUpdateCreateSerializer(serializers.Serializer):
     in_game_name = serializers.CharField()
     old_rank = serializers.IntegerField(required=False)
     new_rank = serializers.IntegerField()

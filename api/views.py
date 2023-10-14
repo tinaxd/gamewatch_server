@@ -16,7 +16,7 @@ from . import serializers as ser
 
 class LevelUpdateView(APIView):
     def post(self, request):
-        serializer = ser.LevelUpdateSerializer(data=request.data)
+        serializer = ser.LevelUpdateCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             cache.delete(ck.LEVEL_UPDATE_KEY)
@@ -26,7 +26,7 @@ class LevelUpdateView(APIView):
 
 class RankUpdateView(APIView):
     def post(self, request):
-        serializer = ser.RankUpdateSerializer(data=request.data)
+        serializer = ser.RankUpdateCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             cache.delete(ck.RANK_UPDATE_KEY)
