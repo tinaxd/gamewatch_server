@@ -192,8 +192,8 @@ class CheckSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = wm.ApexabilityCheck
-        fields = ["player", "entry_type", "time", "game_name"]
+        model = wm.PlayHistoryGame
+        fields = ["player", "start_time", "stop_time", "game_name"]
 
 
 class OW2DBUploadSerializer(serializers.Serializer):

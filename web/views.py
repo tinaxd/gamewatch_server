@@ -1,19 +1,17 @@
 import datetime
 
-import dateutil.parser
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.forms import ValidationError
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.cache import cache_control
 
 from . import models
-from .forms import CheckForm, LinkForm, LoginForm, RegisterForm
+from .forms import LinkForm, LoginForm, RegisterForm
 
 # Create your views here.
 
@@ -159,29 +157,8 @@ def link_approve(request):
 
 @login_required
 def manual_check(request):
-    if request.method == "POST":
-        form = CheckForm(request.POST)
-        if form.is_valid():
-            link = models.UserLink.objects.filter(user=request.user).first()
-            if link is None:
-                return redirect(reverse("web:account"))
-            player = link.player
-            entry_type = form.cleaned_data["entry_type"]
-            time = form.cleaned_data["time"]
-            check = models.ApexabilityCheck(
-                player=player, entry_type=entry_type, time=time
-            )
-            check.save()
-            # reset form
-            form = CheckForm()
-    else:
-        form = CheckForm()
-
-    return render(
-        request,
-        "web/manual_check.html",
-        {"form": form, "account_name": request.user.username},
-    )
+    # return a string that states this feature is not usable yet.
+    return HttpResponse("This feature is not available now.")
 
 
 def root(request):

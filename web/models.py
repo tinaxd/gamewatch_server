@@ -116,35 +116,34 @@ class ApexabilityCheckOld(models.Model):
     def __str__(self):
         return f"{self.player} {self.played_game} {self.entry_type}s at {self.time}"
 
-    class Meta:
-        indexes = [models.Index(fields=["-time"], name="check_time_old_desc")]
 
-
-class ApexabilityCheck(models.Model):
+class PlayHistory(models.Model):
     player = models.ForeignKey(
         Player, blank=False, null=False, on_delete=models.CASCADE
     )
     start_time = models.DateTimeField(blank=False, null=False)
     stop_time = models.DateTimeField(blank=True, null=True)
-    played_game = models.ForeignKey(
-        Game, blank=True, null=True, on_delete=models.SET_NULL
-    )
-
-    def as_dict(self):
-        return {
-            "player": self.player.display_name,
-            "start_time": self.start_time,
-            "stop_time": self.stop_time,
-        }
 
     def __str__(self):
-        return (
-            f"{self.player} {self.played_game} from "
-            f"{self.start_time} to {self.stop_time}"
-        )
+        return f"{self.player} from " f"{self.start_time} to {self.stop_time}"
 
     class Meta:
         indexes = [models.Index(fields=["-start_time"], name="check_time_desc")]
+
+
+class PlayHistoryGame(models.Model):
+    target_history = models.ForeignKey(
+        PlayHistory, blank=False, null=False, on_delete=models.CASCADE
+    )
+    game = models.ForeignKey(Game, blank=False, null=False, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.target_history} ({self.game})"
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["target_history"], name="history_target_game_asc")
+        ]
 
 
 class UserLink(models.Model):

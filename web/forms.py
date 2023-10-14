@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+
 from . import models
 
 
@@ -40,11 +41,3 @@ class LinkForm(forms.Form):
         cleaned_data = super().clean()
         if cleaned_data.get("player") is None:
             raise forms.ValidationError("player is not set", code="invalid")
-
-
-class CheckForm(forms.ModelForm):
-    class Meta:
-        model = models.ApexabilityCheck
-        fields = ["entry_type", "time"]
-
-        widgets = {"time": forms.DateTimeInput(attrs={"type": "datetime-local"})}
