@@ -73,7 +73,10 @@ class RankUpdate(models.Model):
         }
 
     def __str__(self):
-        return f"RankUpdate({self.rank_type}) of {self.player} from {self.old_rank} to {self.new_rank}"
+        return (
+            f"RankUpdate({self.rank_type}) of {self.player} "
+            f"from {self.old_rank} to {self.new_rank}"
+        )
 
     class Meta:
         indexes = [models.Index(fields=["-time"], name="ru_time_desc")]
@@ -87,7 +90,7 @@ class Game(models.Model):
         return f"Game {self.name}"
 
 
-class ApexabilityCheck(models.Model):
+class ApexabilityCheckOld(models.Model):
     class StartStopType(models.TextChoices):
         START = "start", "Start"
         STOP = "stop", "Stop"
@@ -114,7 +117,34 @@ class ApexabilityCheck(models.Model):
         return f"{self.player} {self.played_game} {self.entry_type}s at {self.time}"
 
     class Meta:
-        indexes = [models.Index(fields=["-time"], name="check_time_desc")]
+        indexes = [models.Index(fields=["-time"], name="check_time_old_desc")]
+
+
+class ApexabilityCheck(models.Model):
+    player = models.ForeignKey(
+        Player, blank=False, null=False, on_delete=models.CASCADE
+    )
+    start_time = models.DateTimeField(blank=False, null=False)
+    stop_time = models.DateTimeField(blank=True, null=True)
+    played_game = models.ForeignKey(
+        Game, blank=True, null=True, on_delete=models.SET_NULL
+    )
+
+    def as_dict(self):
+        return {
+            "player": self.player.display_name,
+            "start_time": self.start_time,
+            "stop_time": self.stop_time,
+        }
+
+    def __str__(self):
+        return (
+            f"{self.player} {self.played_game} from "
+            f"{self.start_time} to {self.stop_time}"
+        )
+
+    class Meta:
+        indexes = [models.Index(fields=["-start_time"], name="check_time_desc")]
 
 
 class UserLink(models.Model):
