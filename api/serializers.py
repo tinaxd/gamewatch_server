@@ -97,13 +97,54 @@ class ApexabilityCheckSerializer(serializers.Serializer):
             .player
         )
         game = wm.Game.objects.filter(name=validated_data["game_name"]).first()
-        wm.ApexabilityCheck.objects.create(
-            player=player,
-            entry_type=validated_data["type"],
-            time=validated_data["time"],
-            played_game=game,
-        )
-        return validated_data
+
+        if validated_data["type"] == "start":
+            # check if there is an existing start entry
+            existing_start = wm.PlayHistory.objects.filter(
+                player=player, stop_time=None
+            ).first()
+            # if there is, ignore the request
+            if existing_start:
+                return validated_data
+            else:
+                # add a new start entry
+                wm.PlayHistory.objects.create(
+                    player=player,
+                    played_game=game,
+                    start_time=validated_data["time"],
+                    stop_time=None,
+                )
+                return validated_data
+        elif validated_data["type"] == "stop":
+            # check if there is an existing start entry
+            existing_start = wm.PlayHistory.objects.filter(
+                player=player, stop_time=None
+            ).first()
+            # if there is, add a stop entry
+            if existing_start:
+                existing_start.stop_time = validated_data["time"]
+                existing_start.save()
+                return validated_data
+            else:
+                # check the latest already-stopped entry
+                already_stopped = (
+                    wm.PlayHistory.objects.filter(player=player)
+                    .order_by("-stop_time")
+                    .first()
+                )
+                if already_stopped is None:
+                    # ignore the request
+                    return validated_data
+                else:
+                    # extend the stop time
+                    # game may be different, but that's fine
+                    already_stopped.stop_time = validated_data["time"]
+                    already_stopped.save()
+                    return validated_data
+        else:
+            # this is not possible
+            # as already validated
+            raise Exception("Invalid type")
 
 
 class CompatLevelUpdateSerializer(serializers.Serializer):
@@ -185,15 +226,11 @@ class RankUpdateSerializer(serializers.ModelSerializer):
         fields = ["player", "time", "rank", "rank_name", "rank_type"]
 
 
-class CheckSerializer(serializers.ModelSerializer):
-    player = serializers.CharField(max_length=50, source="player.display_name")
-    game_name = serializers.CharField(
-        max_length=64, source="played_game.name", allow_null=True
-    )
-
-    class Meta:
-        model = wm.PlayHistoryGame
-        fields = ["player", "start_time", "stop_time", "game_name"]
+class CheckSerializer(serializers.Serializer):
+    player = serializers.CharField(max_length=50)
+    entry_type = serializers.CharField(max_length=5)
+    time = serializers.DateTimeField()
+    game_name = serializers.CharField(max_length=64, allow_null=True)
 
 
 class OW2DBUploadSerializer(serializers.Serializer):

@@ -4,7 +4,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core import serializers
 from django.db import transaction
+from django.db.models import Sum
+from django.db.models.expressions import F
+from django.db.models.functions import Extract
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
@@ -28,7 +32,52 @@ def level(request):
 
 @cache_control(public=True, max_age=600)
 def apexability(request):
-    return render(request, "web/apexability.html", {})
+    recent_records = models.PlayHistory.objects.all().order_by("-start_time")[:20]
+
+    # calculate total playing duration of each player for each year, month and game
+    monthly_playing_time = (
+        models.PlayHistory.objects.filter(
+            # stop_time is not null
+            stop_time__isnull=False,
+        )
+        .values(
+            # player
+            "player",
+            # year and month
+            "start_time__year",
+            "start_time__month",
+            # game
+            "played_game",
+        )
+        .annotate(
+            player_display_name=F("player__display_name"),
+            game_name=F("played_game__name"),
+            # sum of duration
+            duration=Extract(Sum(F("stop_time") - F("start_time")), "epoch"),
+        )
+    ).values()
+    print(monthly_playing_time)
+    monthly_records = []
+    for record in monthly_playing_time:
+        print(record)
+        monthly_records.append(
+            {
+                "player": record["player_display_name"],
+                "year": record["start_time__year"],
+                "month": record["start_time__month"],
+                "game": record["game_name"],
+                "duration": record["duration"],
+            }
+        )
+
+    return render(
+        request,
+        "web/apexability.html",
+        {
+            "recent_records": recent_records,
+            "monthly_records": monthly_records,
+        },
+    )
 
 
 @login_required

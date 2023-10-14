@@ -10,33 +10,40 @@
 
 {% block body %}
 {% include 'web/header.html' %}
+{{monthly_records|json_script:"monthly_records"}}
 <div id="container">
-    <select id="viewTypeSelector">
+    <select id="viewTypeSelector" style="display: none;">
         <option value="overview">Overview</option>
-        <option value="daily">Daily</option>
+        <!-- <option value="daily">Daily</option> -->
     </select>
 
-    <div class="swapable" x-view="overview" id="overview">
-        最新の20件のみ表示しています。手動でプレイ履歴を登録するには<a href="{% url 'web:manual-check' %}">ここ</a>を押してください。
+    <div class="swapable active" x-view="overview" id="overview">
+        最新の20件のみ表示しています。
         <table class="apexability-table">
             <thead class="table-header">
                 <tr class="header-row">
                     <th class="header-cell">Name</th>
                     <th class="header-cell">Game</th>
-                    <th class="header-cell">Type</th>
                     <th class="header-cell">Time</th>
+                    <th class="header-cell">Duration</th>
                 </tr>
             </thead>
-            <tbody id="apexabilityBody">
+            <tbody> 
+            {% for record in recent_records %}
+                <tr>
+                    <td>{{record.player.display_name}}</td>
+                    <td>{{record.played_game.name}}</td>
+                    <td>{{record.start_time}} ~ {{record.stop_time|default_if_none:""}}</td>
+                    {% if record.stop_time %}
+                    <td>{{record.stop_time|timeuntil:record.start_time}}</td>
+                    {% else %}
+                    <td><span class="playing-now-badge">Playing</span></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
             </tbody>
         </table>
         <canvas id="monthChart"></canvas>
-    </div>
-
-    <div class="swapable" x-view="daily" id="daily">
-        <input type="date" id="dateSelector">
-        <button id="dateTodayButton">Today</button>
-        <div id="dailyCanvasTarget"></div>
     </div>
 </div>
 <script src="{% static 'web/apexability.js' %}" type="module"></script>

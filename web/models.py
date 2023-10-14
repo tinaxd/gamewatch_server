@@ -123,27 +123,18 @@ class PlayHistory(models.Model):
     )
     start_time = models.DateTimeField(blank=False, null=False)
     stop_time = models.DateTimeField(blank=True, null=True)
+    played_game = models.ForeignKey(
+        Game, blank=True, null=True, on_delete=models.SET_NULL
+    )
 
     def __str__(self):
-        return f"{self.player} from " f"{self.start_time} to {self.stop_time}"
+        return (
+            f"{self.player} from "
+            f"{self.start_time} to {self.stop_time} playing {self.played_game}"
+        )
 
     class Meta:
         indexes = [models.Index(fields=["-start_time"], name="check_time_desc")]
-
-
-class PlayHistoryGame(models.Model):
-    target_history = models.ForeignKey(
-        PlayHistory, blank=False, null=False, on_delete=models.CASCADE
-    )
-    game = models.ForeignKey(Game, blank=False, null=False, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.target_history} ({self.game})"
-
-    class Meta:
-        indexes = [
-            models.Index(fields=["target_history"], name="history_target_game_asc")
-        ]
 
 
 class UserLink(models.Model):
