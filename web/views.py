@@ -55,11 +55,11 @@ def apexability(request):
             # sum of duration
             duration=Extract(Sum(F("stop_time") - F("start_time")), "epoch"),
         )
-    ).values()
-    print(monthly_playing_time)
+    ).all()
+    # print(monthly_playing_time)
     monthly_records = []
     for record in monthly_playing_time:
-        print(record)
+        # print(record)
         monthly_records.append(
             {
                 "player": record["player_display_name"],
