@@ -1,23 +1,35 @@
 let canvas;
 let chart;
 let monthlyRecords;
+let monthSelector;
 let targetYearMonth = [
   // default is current
   new Date().getFullYear(),
   new Date().getMonth() + 1,
 ];
 
+function updateChart() {
+  const games = extractGamesFromData(monthlyRecords);
+  const players = extractPlayersFromData(monthlyRecords);
+  const dataset = prepareDataset(monthlyRecords, games, players);
+  drawPlayTimeChart(dataset);
+}
+
 window.addEventListener("load", () => {
+  monthSelector = document.getElementById("monthSelector");
+  monthSelector.addEventListener("change", (event) => {
+    // format in YYYY-MM
+    const yearMonth = event.target.value.split("-");
+    targetYearMonth = [parseInt(yearMonth[0]), parseInt(yearMonth[1])];
+    updateChart();
+  });
+
   monthlyRecords = JSON.parse(
     document.getElementById("monthly_records").textContent
   );
   canvas = document.getElementById("monthChart");
   // const labels = generateLabelsForChart(monthlyRecords);
-  const games = extractGamesFromData(monthlyRecords);
-  const players = extractPlayersFromData(monthlyRecords);
-  const dataset = prepareDataset(monthlyRecords, games, players);
-  console.log(dataset);
-  drawPlayTimeChart(dataset);
+  updateChart();
 });
 
 function generateLabelsForChart(data) {
@@ -113,6 +125,11 @@ function prepareDataset(data, games, players) {
 }
 
 function drawPlayTimeChart(dataset) {
+  if (chart) {
+    chart.destroy();
+    chart = null;
+  }
+
   const ctx = canvas.getContext("2d");
   const config = {
     type: "bar",
