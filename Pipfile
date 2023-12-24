@@ -16,6 +16,7 @@ scipy = "*"
 django-minio-storage = "*"
 python-dotenv = "*"
 whitenoise = "*"
+uwsgi = "*"
 
 [dev-packages]
 flake8 = "*"

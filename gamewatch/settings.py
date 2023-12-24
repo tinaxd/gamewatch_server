@@ -25,12 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure---_fi$kq84#t@(=$yj-n3a6o*ma=3lyj((iequ2%lt7s4ja$h@"
+SECRET_KEY = os.environ["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv("DEBUG", False))
 
 ALLOWED_HOSTS = []
+_ah = os.getenv("ALLOWED_HOSTS", "")
+if _ah:
+    ALLOWED_HOSTS = _ah.split(",")
 
 
 # Application definition
@@ -165,3 +168,5 @@ MINIO_STORAGE_SECRET_KEY = os.environ["MINIO_STORAGE_SECRET_KEY"]
 MINIO_STORAGE_MEDIA_BUCKET_NAME = os.environ["MINIO_STORAGE_MEDIA_BUCKET_NAME"]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+REDIS_URL = os.environ["REDIS_URL"]
